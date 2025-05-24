@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="recipe-form-container">
+    <h1>{% if form.instance.pk %}Редактировать{% else %}Добавить{% endif %} рецепт</h1>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if form_errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field, errors in form_errors.items %}
+            <li>{{ field }}: {{ errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="recipe-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Название рецепта</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Описание</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.category.id_for_label }}">Категория</label>
+            {{ form.category }}
+            {{ form.category.errors }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Фото блюда</label>
+            {{ form.image }}
+            {{ form.image.errors }}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.difficulty.id_for_label }}">Сложность</label>
+                {{ form.difficulty }}
+                {{ form.difficulty.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.servings.id_for_label }}">Количество порций</label>
+                {{ form.servings }}
+                {{ form.servings.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.calories.id_for_label }}">Калории (ккал)</label>
+                {{ form.calories }}
+                {{ form.calories.errors }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.ingredients.id_for_label }}">Ингредиенты</label>
+            {{ form.ingredients }}
+            {{ form.ingredients.errors }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.cooking_steps.id_for_label }}">Шаги приготовления</label>
+            {{ form.cooking_steps }}
+            {{ form.cooking_steps.errors }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            {% if form.instance.pk %}Сохранить изменения{% else %}Создать рецепт{% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }} – RecipeSite{% endblock %}
+
+{% block content %}
+<article class="recipe-detail">
+    <h1>{{ recipe.title }}</h1>
+    {% if recipe.image %}
+    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="detail-img">
+    {% endif %}
+    <p>{{ recipe.description }}</p>
+
+    <h2>Ингредиенты</h2>
+    <ul>
+        {% for ing in recipe.ingredients.all %}
+        <li>{{ ing.name }} — {{ ing.quantity }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Шаги приготовления</h2>
+    <ol>
+        {% for step in recipe.steps.all %}
+        <li>{{ step.text }}</li>
+        {% endfor %}
+    </ol>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'recipes:edit_recipe' recipe.id %}" class="btn">Редактировать</a>
+    <a href="{% url 'recipes:delete_recipe' recipe.id %}" class="btn btn-danger">Удалить</a>
+    {% endif %}
+</article>
+{% endblock %}

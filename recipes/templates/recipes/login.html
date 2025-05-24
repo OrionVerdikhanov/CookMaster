@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="login-form-container">
+        <h2 class="login-form-title">Вход</h2>
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="login-form-button">Войти</button>
+        </form>
+        <a href="{% url 'recipes:signup' %}" class="login-form-link">Нет аккаунта? Зарегистрируйтесь</a>
+    </div>
+{% endblock %}

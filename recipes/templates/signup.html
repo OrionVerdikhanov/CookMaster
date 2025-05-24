@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация – RecipeSite{% endblock %}
+
+{% block content %}
+<h1>Регистрация</h1>
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn">Зарегистрироваться</button>
+</form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="page-title">Рецепты на любой случай</h1>
+<div class="recipes">
+    {% for recipe in recipes %}
+    <div class="recipe-card">
+        <a href="{% url 'recipes:recipe_detail' recipe.id %}">
+            <h2 class="recipe-title">{{ recipe.title }}</h2>
+            {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-image">
+            {% else %}
+            <p class="no-image">Нет изображения</p>
+            {% endif %}
+        </a>
+        <p class="recipe-description">{{ recipe.description|truncatechars:100 }}</p>
+    </div>
+    {% empty %}
+    <p>Нет доступных рецептов.</p>
+    {% endfor %}
+</div>
+{% endblock %}

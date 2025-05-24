@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CookMaster - Лучшие рецепты{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="{% url 'recipes:home' %}" class="logo">
+                    <i class="fas fa-hat-chef"></i> CookMaster
+                </a>
+
+                <form class="search-form" action="{% url 'recipes:search' %}" method="GET">
+                    <input type="text" name="q" placeholder="Найти рецепт..." class="search-input">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+
+                <ul class="nav-links">
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'recipes:add_recipe' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Добавить рецепт
+                    </a></li>
+                    <li class="profile-dropdown">
+                        <button class="profile-btn">
+                            <i class="fas fa-user"></i> {{ user.username }}
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="{% url 'recipes:profile' %}">
+                                <i class="fas fa-user-circle"></i> Профиль
+                            </a>
+                            <form action="{% url 'recipes:logout' %}" method="post" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" style="width: 100%; text-align: left; background: none; border: none; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <i class="fas fa-sign-out-alt"></i> Выход
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li><button class="btn btn-login" onclick="openModal('loginModal')">Войти</button></li>
+                    <li><button class="btn btn-signup" onclick="openModal('signupModal')">Регистрация</button></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <div class="auth-form">
+                <h2>Вход в аккаунт</h2>
+                <form method="post" action="{% url 'recipes:login' %}" id="loginForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="username" placeholder="Имя пользователя" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Пароль" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Войти</button>
+                </form>
+                <p class="auth-switch">
+                    Нет аккаунта? <a href="#" onclick="switchModal('loginModal', 'signupModal')">Зарегистрироваться</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <div class="auth-form">
+                <h2>Регистрация</h2>
+                <form method="post" action="{% url 'recipes:signup' %}" id="signupForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="username" placeholder="Имя пользователя" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password1" placeholder="Пароль" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password2" placeholder="Подтвердите пароль" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+                </form>
+                <p class="auth-switch">
+                    Уже есть аккаунт? <a href="#" onclick="switchModal('signupModal', 'loginModal')">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-hat-chef"></i> CookMaster
+                </div>
+                <div class="footer-links">
+                    <a href="#">О нас</a>
+                    <a href="#">Контакты</a>
+                    <a href="#">Политика конфиденциальности</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© {% now "Y" %} CookMaster. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function switchModal(closeId, openId) {
+            closeModal(closeId);
+            openModal(openId);
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let formData = new FormData(this);
+            
+            fetch('{% url "recipes:login" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Ошибка входа. Пожалуйста, попробуйте снова.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка. Пожалуйста, попробуйте снова.');
+            });
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.submit();
+        });
+    </script>
+</body>
+
+</html>

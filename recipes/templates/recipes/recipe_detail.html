@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="recipe-detail">
+    <div class="recipe-header">
+        <div class="recipe-title-section">
+            <h1>{{ recipe.title }}</h1>
+            <div class="recipe-meta">
+                <span><i class="far fa-clock"></i> {{ recipe.cooking_time }} мин</span>
+                <span><i class="fas fa-user"></i> {{ recipe.author }}</span>
+                <span><i class="far fa-calendar"></i> {{ recipe.created_at|date:"d.m.Y" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="recipe-content">
+        <div class="recipe-main">
+            <div class="recipe-image-container">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-main-image">
+                {% else %}
+                    <img src="{% static 'images/default-recipe.jpg' %}" alt="Default recipe image" class="recipe-main-image">
+                {% endif %}
+            </div>
+
+            <div class="recipe-description">
+                <h2>Описание</h2>
+                <p>{{ recipe.description }}</p>
+            </div>
+
+            <div class="recipe-info-grid">
+                <div class="recipe-info-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Сложность</h3>
+                    <p>{{ recipe.get_difficulty_display }}</p>
+                </div>
+                <div class="recipe-info-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Порций</h3>
+                    <p>{{ recipe.servings }}</p>
+                </div>
+                <div class="recipe-info-card">
+                    <i class="fas fa-fire"></i>
+                    <h3>Калории</h3>
+                    <p>{{ recipe.calories }} ккал</p>
+                </div>
+            </div>
+
+            <div class="recipe-sections">
+                <div class="ingredients-section">
+                    <h2><i class="fas fa-list"></i> Ингредиенты</h2>
+                    <ul class="ingredients-list">
+                        {% for ingredient in recipe.ingredients.splitlines %}
+                        <li>
+                            <span class="ingredient-name">{{ ingredient }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="instructions-section">
+                    <h2><i class="fas fa-tasks"></i> Инструкция приготовления</h2>
+                    <div class="instructions-list">
+                        {% for step in recipe.cooking_steps.splitlines %}
+                        <div class="instruction-step">
+                            <div class="step-number">{{ forloop.counter }}</div>
+                            <p>{{ step }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="recipe-actions">
+                <button class="btn-favorite {% if is_favorite %}active{% endif %}">
+                    <i class="fas fa-heart"></i> В избранное
+                </button>
+                <button class="btn-share">
+                    <i class="fas fa-share"></i> Поделиться
+                </button>
+                {% if user == recipe.author %}
+                <a href="{% url 'recipes:edit_recipe' recipe.id %}" class="btn-edit">
+                    <i class="fas fa-edit"></i> Редактировать
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="recipe-sidebar">
+            <div class="author-card">
+                <img src="{{ recipe.author.profile.avatar.url }}" alt="{{ recipe.author.username }}" class="author-avatar">
+                <h3>{{ recipe.author.username }}</h3>
+                <p>{{ recipe.author.profile.bio|truncatewords:20 }}</p>
+                <button class="btn-follow">Подписаться</button>
+            </div>
+
+            <div class="similar-recipes">
+                <h3>Похожие рецепты</h3>
+                {% for similar in similar_recipes %}
+                <div class="similar-recipe-card">
+                    <img src="{{ similar.image.url }}" alt="{{ similar.title }}" class="similar-recipe-image">
+                    <div class="similar-recipe-info">
+                        <h4>{{ similar.title }}</h4>
+                        <p><i class="far fa-clock"></i> {{ similar.cooking_time }} мин</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="search-results">
+    <h1>Результаты поиска</h1>
+    <p class="search-query">Вы искали: "{{ query }}"</p>
+
+    {% if results %}
+        <div class="recipe-grid">
+            {% for recipe in results %}
+                <div class="recipe-card">
+                    <div class="recipe-image-container">
+                        {% if recipe.image %}
+                            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-image">
+                        {% else %}
+                            <div class="recipe-image-placeholder">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="recipe-content">
+                        <h2 class="recipe-title">
+                            <a href="{% url 'recipes:recipe_detail' recipe.id %}">{{ recipe.title }}</a>
+                        </h2>
+                        <p class="recipe-description">{{ recipe.description|truncatechars:100 }}</p>
+                        <p class="recipe-category">Категория: {{ recipe.category.name }}</p>
+                        <p class="recipe-author">Автор: {{ recipe.author }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-results">По вашему запросу ничего не найдено.</p>
+    {% endif %}
+    
+    <p><a href="{% url 'recipes:home' %}" class="back-button">Вернуться на главную</a></p>
+</div>
+{% endblock %}
